@@ -27,6 +27,7 @@ const runServer = async () => {
       fields: 200,
       fileSize: 200,
       files: 2,
+      parts: 500,
       headerPairs: 200
     }
   })
@@ -185,6 +186,13 @@ const runServer = async () => {
 
     reply.send();
   })
+
+  expectError(app.register(fastifyMultipart, {
+    attachFieldsToBody: true,
+    limits: {
+      parts: "500",
+    }
+  }));
 
   await app.ready()
 }
