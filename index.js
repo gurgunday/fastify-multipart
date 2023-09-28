@@ -16,7 +16,6 @@ const secureJSON = require('secure-json-parse')
 
 const kMultipart = Symbol('multipart')
 const kMultipartHandler = Symbol('multipartHandler')
-const getDescriptor = Object.getOwnPropertyDescriptor
 
 const PartsLimitError = createError('FST_PARTS_LIMIT', 'reach parts limit', 413)
 const FilesLimitError = createError('FST_FILES_LIMIT', 'reach files limit', 413)
@@ -248,7 +247,7 @@ function fastifyMultipart (fastify, options, done) {
 
     function onField (name, fieldValue, fieldnameTruncated, valueTruncated, encoding, contentType) {
       // don't overwrite prototypes
-      if (getDescriptor(Object.prototype, name)) {
+      if (Object.getOwnPropertyDescriptor(Object.prototype, name)) {
         onError(new PrototypeViolationError())
         return
       }
@@ -294,7 +293,7 @@ function fastifyMultipart (fastify, options, done) {
 
     function onFile (name, file, filename, encoding, mimetype) {
       // don't overwrite prototypes
-      if (getDescriptor(Object.prototype, name)) {
+      if (Object.getOwnPropertyDescriptor(Object.prototype, name)) {
         // ensure that stream is consumed, any error is suppressed
         sendToWormhole(file)
         onError(new PrototypeViolationError())
