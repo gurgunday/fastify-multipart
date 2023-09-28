@@ -247,7 +247,7 @@ function fastifyMultipart (fastify, options, done) {
 
     function onField (name, fieldValue, fieldnameTruncated, valueTruncated, encoding, contentType) {
       // don't overwrite prototypes
-      if (Object.getOwnPropertyDescriptor(Object.prototype, name)) {
+      if (name in Object.prototype) {
         onError(new PrototypeViolationError())
         return
       }
@@ -293,7 +293,7 @@ function fastifyMultipart (fastify, options, done) {
 
     function onFile (name, file, filename, encoding, mimetype) {
       // don't overwrite prototypes
-      if (Object.getOwnPropertyDescriptor(Object.prototype, name)) {
+      if (name in Object.prototype) {
         // ensure that stream is consumed, any error is suppressed
         sendToWormhole(file)
         onError(new PrototypeViolationError())
