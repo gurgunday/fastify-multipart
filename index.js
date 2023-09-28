@@ -85,7 +85,7 @@ function fastifyMultipart (fastify, options, done) {
       }
 
       if (attachFieldsToBody === 'keyValues') {
-        const body = Object.create(null)
+        const body = {}
 
         if (req.body) {
           const reqBodyKeys = Object.keys(req.body)
@@ -202,7 +202,7 @@ function fastifyMultipart (fastify, options, done) {
       })
     }
 
-    const body = Object.create(null)
+    const body = {}
     let lastError = null
     let currentFile = null
     const request = this.raw
