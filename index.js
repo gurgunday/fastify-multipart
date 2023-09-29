@@ -10,6 +10,7 @@ const { generateId } = require('./lib/generateId')
 const { NullObject } = require('./lib/NullObject')
 const util = require('node:util')
 const createError = require('@fastify/error')
+const sendToWormhole = require('stream-wormhole')
 const deepmergeAll = require('@fastify/deepmerge')({ all: true })
 const { PassThrough, pipeline, Readable } = require('node:stream')
 const pump = util.promisify(pipeline)
@@ -17,6 +18,7 @@ const secureJSON = require('secure-json-parse')
 
 const kMultipart = Symbol('multipart')
 const kMultipartHandler = Symbol('multipartHandler')
+const getDescriptor = Object.getOwnPropertyDescriptor
 
 const PartsLimitError = createError('FST_PARTS_LIMIT', 'reach parts limit', 413)
 const FilesLimitError = createError('FST_FILES_LIMIT', 'reach files limit', 413)
@@ -247,6 +249,12 @@ function fastifyMultipart (fastify, options, done) {
     request.pipe(bb)
 
     function onField (name, fieldValue, fieldnameTruncated, valueTruncated, encoding, contentType) {
+      // don't overwrite prototypes
+      if (getDescriptor(Object.prototype, name)) {
+        onError(new PrototypeViolationError())
+        return
+      }
+
       // If it is a JSON field, parse it
       if (contentType.startsWith('application/json')) {
         // If the value was truncated, it can never be a valid JSON. Don't even try to parse
@@ -287,6 +295,14 @@ function fastifyMultipart (fastify, options, done) {
     }
 
     function onFile (name, file, filename, encoding, mimetype) {
+      // don't overwrite prototypes
+      if (getDescriptor(Object.prototype, name)) {
+        // ensure that stream is consumed, any error is suppressed
+        sendToWormhole(file)
+        onError(new PrototypeViolationError())
+        return
+      }
+
       const throwFileSizeLimit = typeof opts.throwFileSizeLimit === 'boolean'
         ? opts.throwFileSizeLimit
         : defaultThrowFileSizeLimit

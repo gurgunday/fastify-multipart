@@ -9,7 +9,8 @@
     "@fastify/deepmerge": "^1.0.0",
     "@fastify/error": "^3.0.0",
     "fastify-plugin": "^4.0.0",
-    "secure-json-parse": "^2.4.0"
+    "secure-json-parse": "^2.4.0",
+    "stream-wormhole": "^2.0.1"
   },
   "devDependencies": {
     "@fastify/pre-commit": "^2.0.2",
@@ -33,7 +34,6 @@
     "readable-stream": "^3.6.0",
     "snazzy": "^9.0.0",
     "standard": "^17.0.0",
-    "stream-wormhole": "^2.0.1",
     "tap": "^16.0.0",
     "tsd": "^0.29.0"
   },
